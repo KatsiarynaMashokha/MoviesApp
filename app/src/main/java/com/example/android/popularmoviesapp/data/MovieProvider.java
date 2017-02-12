@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+import android.util.Log;
 
 import com.example.android.popularmoviesapp.data.MovieContract.MovieEntry;
 
@@ -17,19 +18,21 @@ import com.example.android.popularmoviesapp.data.MovieContract.MovieEntry;
 public class MovieProvider extends ContentProvider {
     private static final UriMatcher sUriMatcher = buildUriMatcher();
     private MovieDbHelper movieDbHelper;
+    private static final String LOG_TAG = MovieProvider.class.getSimpleName();
 
     static final int MOVIES = 100;
     static final int MOVIE_WITH_ID = 101;
 
     private static final SQLiteQueryBuilder sMovieBuilder;
+
     static {
         sMovieBuilder = new SQLiteQueryBuilder();
         sMovieBuilder.setTables(MovieEntry.TABLE_NAME);
     }
 
-
     @Override
     public boolean onCreate() {
+        Log.v(LOG_TAG, "MovieDbHelper is being created");
         movieDbHelper = new MovieDbHelper(getContext());
         return true;
     }
@@ -50,16 +53,15 @@ public class MovieProvider extends ContentProvider {
                         sortOrder
                 );
                 break;
-        }
-                default:
-                    throw new UnsupportedOperationException("Unknown uri: " + uri);
-
             }
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
 
-    retCursor.setNotificationUri(getContext().getContentResolver(), uri);
-    return retCursor;
+        }
+
+        retCursor.setNotificationUri(getContext().getContentResolver(), uri);
+        return retCursor;
     }
-
 
     @Override
     public String getType(Uri uri) {
@@ -90,34 +92,20 @@ public class MovieProvider extends ContentProvider {
                 else
                     throw new android.database.SQLException("Failed to inset a row into " + uri);
                 break;
-                }
+            }
             default:
                 throw new UnsupportedOperationException("Unknown Uri " + uri);
-            }
+        }
         getContext().getContentResolver().notifyChange(uri, null);
         db.close();
         return returnUri;
-        }
-
-
-//        values = new ContentValues();
-//
-//        values.put(MovieEntry.COLUMN_MOVIE_TITLE, movie.getTitle());
-//        values.put(MovieEntry.COLUMN_RELEASE_DATE, movie.getReleaseDate());
-//        values.put(MovieEntry.COLUMN_RATING, movie.getVoteAverage());
-//        values.put(MovieEntry.COLUMN_DESCRIPTION, movie.getOverview());
-//        values.put(MovieEntry.COLUMN_POSTER_PATH, movie.getImageUrl());
-//        values.put(MovieEntry.COLUMN_TRAILER_PATH, movie.getYoutubePath());
-//        values.put(MovieEntry.COLUMN_REVIEW_PATH, movie.getReviewPath());
-//
-//        db.insert(MovieEntry.TABLE_NAME, null, values);
-//        db.close();
+    }
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
         final SQLiteDatabase db = movieDbHelper.getWritableDatabase();
         int rowsDeleted = db.delete(MovieEntry.TABLE_NAME, selection, selectionArgs);
-        if (rowsDeleted != 0 ) {
+        if (rowsDeleted != 0) {
             getContext().getContentResolver().notifyChange(uri, null);
         }
         return rowsDeleted;
