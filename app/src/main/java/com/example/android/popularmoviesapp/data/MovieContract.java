@@ -24,6 +24,7 @@ public class MovieContract {
         public static final String CONTENT_ITEM_TYPE =
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_MOVIES;
 
+        public static final String MOVIE_ID = "movie_id";
         public static final String TABLE_NAME = "favorite_movie";
         public static final String COLUMN_MOVIE_TITLE = "title";
         public static final String COLUMN_RELEASE_DATE = "release_date";

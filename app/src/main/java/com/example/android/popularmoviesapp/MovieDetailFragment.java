@@ -1,5 +1,6 @@
 package com.example.android.popularmoviesapp;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -17,7 +18,6 @@ import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import com.example.android.popularmoviesapp.data.MovieContract;
-import com.example.android.popularmoviesapp.data.MovieProvider;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -42,10 +42,7 @@ public class MovieDetailFragment extends Fragment {
     public static final String MOVIE_KEY = "movies";
     public static final String REVIEW_KEY = "reviews";
     private Uri mYoutubeUri;
-    MovieProvider provider;
-
     ToggleButton mButton;
-
     private Movie movieInfo;
 
     @Override
@@ -53,7 +50,6 @@ public class MovieDetailFragment extends Fragment {
                              Bundle SavedInstanceState) {
 
         final View rootView = inflater.inflate(R.layout.detail_movie_activity, container, false);
-        provider = new MovieProvider();
         Intent intent = getActivity().getIntent();
         if (intent != null && intent.hasExtra(MOVIE_KEY)) {
             movieInfo = (Movie) intent.getSerializableExtra(MOVIE_KEY);
@@ -99,12 +95,8 @@ public class MovieDetailFragment extends Fragment {
                 }
             });
             mButton = (ToggleButton) rootView.findViewById(R.id.favorite_button);
-            String[] args = {String.valueOf(movieInfo.getMovieId())};
-            Cursor cursor = provider.query(MovieContract.MovieEntry.CONTENT_URI,
-                    null,
-                    MovieContract.MovieEntry._ID + "=?",
-                    args,
-                    null);
+            Uri movieUri = MovieContract.MovieEntry.buildMovieUri(movieInfo.getMovieId());
+            Cursor cursor = getContext().getContentResolver().query(movieUri, null, null, null, null);
             Log.v(LOG_TAG, "cursor " + cursor.getCount());
             if (cursor.getCount() == 1) {
                 mButton.setChecked(true);
@@ -113,12 +105,22 @@ public class MovieDetailFragment extends Fragment {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     if (isChecked) {
-                       // provider = new MovieProvider();
-                       // provider.insert();
-
+                        ContentValues values = new ContentValues();
+                        values.put(MovieContract.MovieEntry.MOVIE_ID, movieInfo.getMovieId());
+                        values.put(MovieContract.MovieEntry.COLUMN_MOVIE_TITLE, movieInfo.getTitle());
+                        values.put(MovieContract.MovieEntry.COLUMN_RATING, movieInfo.getVoteAverage());
+                        values.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE, movieInfo.getReleaseDate());
+                        values.put(MovieContract.MovieEntry.COLUMN_DESCRIPTION, movieInfo.getOverview());
+                        values.put(MovieContract.MovieEntry.COLUMN_POSTER_PATH, movieInfo.getImageUrl());
+                        values.put(MovieContract.MovieEntry.COLUMN_TRAILER_PATH, movieInfo.getTrailerPath());
+                        values.put(MovieContract.MovieEntry.COLUMN_REVIEW_PATH, movieInfo.getReviewPath());
+                        Uri insertUri = getContext().getContentResolver().insert(MovieContract.MovieEntry.CONTENT_URI, values);
+                        Log.v(LOG_TAG, "Uri for insert " + insertUri);
                     }
                     else {
-
+                        int rowsDeleted = getContext().getContentResolver().delete(
+                                MovieContract.MovieEntry.buildMovieUri(movieInfo.getMovieId()), null, null);
+                        Log.v(LOG_TAG, "number of rows deleted: " + rowsDeleted);
                     }
                 }
             });
