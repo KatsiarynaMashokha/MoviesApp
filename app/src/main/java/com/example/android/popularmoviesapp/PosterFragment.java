@@ -83,7 +83,7 @@ public class PosterFragment extends Fragment {
         MovieProvider provider = new MovieProvider();
         Cursor cursor = provider.query(MovieContract.MovieEntry.CONTENT_URI, null, null, null, null);
         while (cursor.moveToNext()) {
-            int indexId = cursor.getColumnIndex(MovieContract.MovieEntry._ID);
+            int indexId = cursor.getColumnIndex(MovieContract.MovieEntry.MOVIE_ID);
             int indexTitle = cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_TITLE);
             int indexOverview = cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_DESCRIPTION);
             int indexRating = cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_RATING);

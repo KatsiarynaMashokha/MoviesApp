@@ -1,6 +1,7 @@
 package com.example.android.popularmoviesapp.data;
 
 import android.content.ContentProvider;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
@@ -54,12 +55,27 @@ public class MovieProvider extends ContentProvider {
                 );
                 break;
             }
+            case MOVIE_WITH_ID: {
+                selection = MovieEntry.MOVIE_ID + "=?";
+                selectionArgs = new String[] {String.valueOf(ContentUris.parseId(uri))};
+                retCursor = movieDbHelper.getReadableDatabase().query(
+                        MovieEntry.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder
+                );
+                break;
+            }
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
 
         }
 
         retCursor.setNotificationUri(getContext().getContentResolver(), uri);
+
         return retCursor;
     }
 
@@ -88,7 +104,7 @@ public class MovieProvider extends ContentProvider {
             case MOVIES: {
                 long _id = db.insert(MovieEntry.TABLE_NAME, null, values);
                 if (_id > 0)
-                    returnUri = MovieEntry.buildMovieUri(_id);
+                    returnUri = MovieEntry.buildMovieUri(values.getAsLong(MovieEntry.MOVIE_ID));
                 else
                     throw new android.database.SQLException("Failed to inset a row into " + uri);
                 break;
@@ -103,12 +119,21 @@ public class MovieProvider extends ContentProvider {
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
+        int rowsDeleted;
         final SQLiteDatabase db = movieDbHelper.getWritableDatabase();
-        int rowsDeleted = db.delete(MovieEntry.TABLE_NAME, selection, selectionArgs);
-        if (rowsDeleted != 0) {
-            getContext().getContentResolver().notifyChange(uri, null);
+        switch (sUriMatcher.match(uri)) {
+            case MOVIE_WITH_ID: {
+                selection = MovieEntry.MOVIE_ID + "=?";
+                selectionArgs = new String[] {String.valueOf(ContentUris.parseId(uri))};
+                rowsDeleted = db.delete(MovieEntry.TABLE_NAME, selection, selectionArgs);
+                if (rowsDeleted != 0) {
+                    getContext().getContentResolver().notifyChange(uri, null);
+                }
+                return rowsDeleted;
+            }
+            default:
+                throw new UnsupportedOperationException("Not valid uri " + uri);
         }
-        return rowsDeleted;
     }
 
     @Override
