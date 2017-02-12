@@ -1,0 +1,39 @@
+<resources>
+    <string name="app_name">Popular Movies App</string>
+    <!-- Menu items. -->
+    <string name="sort">Sort by"\u2026"</string>
+    <string name="title_movie_activity_detail">Movie Details</string>
+
+
+    <!-- Movie detail activity elements. -->
+    <string name="release_date">Release Date:</string>
+    <string name="movie_rating">Movie Rating:</string>
+    <string name="movie_trailer">Play a trailer:</string>
+    <string name="movie_reviews">Go to reviews page</string>
+    <string name="out_of_ten">/10</string>
+
+    <!-- Sorting settings parameters. -->
+    <string name="pref_sort_default">popularity</string>
+    <string name="pref_sort_label">Sorting categoty</string>
+    <string name="pref_sort_label_popularity">Popularity</string>
+    <string name="pref_sort_label_rating">Rating</string>
+    <string name="pref_sort_popular">popularity</string>
+    <string name="pref_sort_rating">rating</string>
+    <string name="pref_sort_key">sort</string>
+
+    <!-- Refresh settings parameters. -->
+    <string name="action_refresh">Refresh</string>
+
+    <!-- No internet conncetion message. -->
+    <string name="no_internet_message">No Internet Connection Available</string>
+
+    <!-- Review page title. -->
+    <string name="review_page">Review Page</string>
+
+    <!-- Mark as favorite button. -->
+    <string name="favorite_button">Add to favorites</string>
+    <string name="added_favorite_button">Added!</string>
+    <string name="settings_favorite">Favorites</string>
+
+
+</resources>

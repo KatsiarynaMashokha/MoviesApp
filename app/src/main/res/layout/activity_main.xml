@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    style="@style/frame_layout_style"
+    android:background="#CFD8DC"
+    tools:context=".MainActivity"
+    tools:ignore="MergeRootFrame">
+</FrameLayout>
+
