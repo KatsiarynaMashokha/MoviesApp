@@ -1,6 +1,7 @@
 package com.example.android.popularmoviesapp;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import com.example.android.popularmoviesapp.data.MovieContract;
 import com.example.android.popularmoviesapp.data.MovieProvider;
 import com.squareup.picasso.Picasso;
 
@@ -46,14 +48,12 @@ public class MovieDetailFragment extends Fragment {
 
     private Movie movieInfo;
 
-    public static Bundle bundle=new Bundle();
-
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle SavedInstanceState) {
 
-
         final View rootView = inflater.inflate(R.layout.detail_movie_activity, container, false);
+        provider = new MovieProvider();
         Intent intent = getActivity().getIntent();
         if (intent != null && intent.hasExtra(MOVIE_KEY)) {
             movieInfo = (Movie) intent.getSerializableExtra(MOVIE_KEY);
@@ -98,22 +98,26 @@ public class MovieDetailFragment extends Fragment {
                     Log.i(LOG_TAG, "Youtube Uri is " + mYoutubeUri);
                 }
             });
-//            final Button addToFavoritesButton = (Button) rootView.findViewById(R.id.favorite_button);
-//            addToFavoritesButton.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    addToFavoritesButton.setText(R.string.added_favorite_button);
-//                    addToFavoritesButton.setTextColor(-1);
             mButton = (ToggleButton) rootView.findViewById(R.id.favorite_button);
+            String[] args = {String.valueOf(movieInfo.getMovieId())};
+            Cursor cursor = provider.query(MovieContract.MovieEntry.CONTENT_URI,
+                    null,
+                    MovieContract.MovieEntry._ID + "=?",
+                    args,
+                    null);
+            Log.v(LOG_TAG, "cursor " + cursor.getCount());
+            if (cursor.getCount() == 1) {
+                mButton.setChecked(true);
+            }
             mButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if (isChecked && !bundle.getBoolean("ToggleButtonState", false)) {
+                    if (isChecked) {
                        // provider = new MovieProvider();
                        // provider.insert();
 
                     }
-                    else if (!isChecked) {
+                    else {
 
                     }
                 }
@@ -216,10 +220,5 @@ public class MovieDetailFragment extends Fragment {
                     .build();
             movieInfo.setYoutubePath(mYoutubeUri.toString());
         }
-    }
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        outState.putBoolean("ToggleButtonState", mButton.isChecked());
-        super.onSaveInstanceState(outState);
     }
 }

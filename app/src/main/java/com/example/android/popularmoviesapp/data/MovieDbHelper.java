@@ -3,6 +3,8 @@ package com.example.android.popularmoviesapp.data;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
+
 import com.example.android.popularmoviesapp.data.MovieContract.MovieEntry;
 
 
@@ -13,6 +15,7 @@ import com.example.android.popularmoviesapp.data.MovieContract.MovieEntry;
 public class MovieDbHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "movie.db";
+    public static final String LOG_TAG = MovieDbHelper.class.getSimpleName();
 
     public MovieDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -30,6 +33,8 @@ public class MovieDbHelper extends SQLiteOpenHelper {
                 MovieEntry.COLUMN_TRAILER_PATH + " TEXT, " +
                 MovieEntry.COLUMN_REVIEW_PATH + " TEXT " +
                 ");";
+
+        Log.v(LOG_TAG, "Creating DB" + SQL_CREATE_MOVIE_TABLE);
 
         db.execSQL(SQL_CREATE_MOVIE_TABLE);
     }
