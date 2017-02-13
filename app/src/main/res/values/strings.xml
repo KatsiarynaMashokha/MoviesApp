@@ -35,5 +35,16 @@
     <string name="added_favorite_button">Added!</string>
     <string name="settings_favorite">Favorites</string>
 
+    <!-- Favorite movies action bar. -->
+    <string name="favorite_movies_bar">Favorite movies</string>
+
+    <!--No movies in favorites state. -->
+    <string name="no_movies_favorites">No movies added to favorites.
+        You can add them by going to the movie details page.</string>
+
+    <!-- No reviews available string. -->
+    <string name="no_reviews">No reviews yet.</string>
+
+
 
 </resources>

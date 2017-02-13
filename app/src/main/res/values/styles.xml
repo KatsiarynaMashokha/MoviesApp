@@ -106,4 +106,24 @@
         <item name="android:textStyle">bold</item>
     </style>
 
+    <!-- Review button and add to favorites button styles. -->
+    <style name="buttons">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:background">@color/colorAccent</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!-- Play icon style. -->
+    <style name="play_icon">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:layout_marginBottom">8dp</item>
+    </style>
+
+
+
 </resources>
