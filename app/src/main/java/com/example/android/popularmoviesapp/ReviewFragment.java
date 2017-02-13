@@ -62,6 +62,10 @@ public class ReviewFragment extends Fragment {
 
         JSONObject posterJsonObject = new JSONObject(reviewJson);
         JSONArray resultsArray = posterJsonObject.getJSONArray(MDB_RESULTS);
+        if (resultsArray.length() == 0) {
+            currentReview = getString(R.string.no_reviews);
+            mReviews.add(currentReview);
+        }
         for (int i = 0; i < resultsArray.length(); i++) {
             JSONObject currentObject = resultsArray.getJSONObject(i);
             currentReview = currentObject.getString(MDB_CONTENT);

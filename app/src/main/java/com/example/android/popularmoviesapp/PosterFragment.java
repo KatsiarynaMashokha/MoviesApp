@@ -24,7 +24,6 @@ import android.widget.GridView;
 import android.widget.TextView;
 
 import com.example.android.popularmoviesapp.data.MovieContract;
-import com.example.android.popularmoviesapp.data.MovieProvider;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -49,7 +48,6 @@ public class PosterFragment extends Fragment {
     private static ArrayAdapter<Movie> mGridViewAdapter;
     private TextView emptyStateTextView;
     ArrayList<Movie> movies;
-    GridView gridView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -67,11 +65,18 @@ public class PosterFragment extends Fragment {
         int id = item.getItemId();
         if (id == R.id.action_refresh) {
             updateMovie();
+            getActivity().setTitle(R.string.app_name);
             return true;
         }
         if (id == R.id.settings_favorite) {
+            getActivity().setTitle(R.string.favorite_movies_bar);
             mGridViewAdapter.clear();
             movies = getFavoriteMovies();
+
+            if (movies.size() == 0) {
+                emptyStateTextView = (TextView) getView().findViewById(R.id.empty_state_text_view);
+                emptyStateTextView.setText(R.string.no_movies_favorites);
+            }
             mGridViewAdapter.addAll(movies);
             mGridViewAdapter.notifyDataSetChanged();
         }
@@ -80,8 +85,7 @@ public class PosterFragment extends Fragment {
 
     private ArrayList<Movie> getFavoriteMovies() {
         movies = new ArrayList<>();
-        MovieProvider provider = new MovieProvider();
-        Cursor cursor = provider.query(MovieContract.MovieEntry.CONTENT_URI, null, null, null, null);
+        Cursor cursor = getContext().getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI, null, null, null, null);
         while (cursor.moveToNext()) {
             int indexId = cursor.getColumnIndex(MovieContract.MovieEntry.MOVIE_ID);
             int indexTitle = cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_TITLE);
@@ -91,7 +95,6 @@ public class PosterFragment extends Fragment {
             int indexPoster = cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_POSTER_PATH);
             int indexReview = cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_REVIEW_PATH);
             int indexTrailer = cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_TRAILER_PATH);
-
 
             long movieId = cursor.getLong(indexId);
             String movieTitle = cursor.getString(indexTitle);
@@ -111,7 +114,7 @@ public class PosterFragment extends Fragment {
                     trailerPath,
                     reviewPath));
         }
-
+        cursor.close();
         return movies;
     }
 
@@ -140,7 +143,6 @@ public class PosterFragment extends Fragment {
 
         return rootView;
     }
-
 
     @Override
     public void onStart() {
@@ -180,10 +182,8 @@ public class PosterFragment extends Fragment {
         String releaseDate;
         int movieId;
 
-
         JSONObject posterJsonObject = new JSONObject(posterJson);
         JSONArray resultsArray = posterJsonObject.getJSONArray(MDB_RESULTS);
-
 
         for (int i = 0; i < resultsArray.length(); i++) {
 
@@ -262,7 +262,6 @@ public class PosterFragment extends Fragment {
             BufferedReader reader = null;
             HttpURLConnection urlConnection = null;
             String posterJson = null;
-
 
             try {
                 SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
@@ -343,5 +342,4 @@ public class PosterFragment extends Fragment {
             super.onPostExecute(movies);
         }
     }
-
 }
